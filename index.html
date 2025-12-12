@@ -6,186 +6,166 @@
 <title>???</title>
 
 <style>
-/* ================== DEIN ORIGINAL CSS ================== */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"><circle cx="8" cy="8" r="6" fill="rgba(255,255,255,0.3)" stroke="white" stroke-width="1"/></svg>'), auto;
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
 }
-/* ===== MOBILE FIX ===== */
-@media (max-width: 768px) {
 
-  .scene.active {
-    flex-direction: column;
-    gap: 40px;
-    padding: 20px;
+body{
+  font-family:'Courier New', monospace;
+  background:#000;
+  min-height:100vh;
+  overflow:hidden;
+  position:relative;
+}
+
+/* ===== GRAIN ===== */
+body::before{
+  content:'';
+  position:fixed;
+  inset:-50%;
+  background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="1.9" numOctaves="5"/></filter><rect width="300" height="300" filter="url(%23n)"/></svg>');
+  opacity:.25;
+  pointer-events:none;
+  z-index:9999;
+  animation:grain .2s steps(4) infinite;
+}
+@keyframes grain{
+  0%{transform:translate(0,0)}
+  25%{transform:translate(-2%,-1%)}
+  50%{transform:translate(1%,-2%)}
+  75%{transform:translate(-1%,1%)}
+}
+
+/* ===== VIGNETTE ===== */
+body::after{
+  content:'';
+  position:fixed;
+  inset:0;
+  box-shadow:inset 0 0 300px 120px rgba(0,0,0,.95);
+  pointer-events:none;
+  z-index:9998;
+}
+
+.container{
+  width:100%;
+  height:100vh;
+  position:relative;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+/* ===== START BUTTON ===== */
+#startBtn{
+  padding:18px 40px;
+  background:#140f0c;
+  color:#9a9a9a;
+  border:1px solid #555;
+  letter-spacing:4px;
+  text-transform:uppercase;
+  cursor:pointer;
+  z-index:10;
+}
+
+/* ===== SCENE ===== */
+.scene{
+  display:none;
+  width:100%;
+  height:100%;
+  justify-content:center;
+  align-items:center;
+  gap:100px;
+}
+.scene.active{display:flex}
+
+/* ===== BOOK ===== */
+.book-container{perspective:1200px}
+
+.book{
+  position:relative;
+  width:450px;
+  height:550px;
+  transform-style:preserve-3d;
+}
+
+.book-cover{
+  position:absolute;
+  inset:0;
+  background:linear-gradient(135deg,#231912,#140f0a);
+  transform-origin:left;
+  transition:transform 1.2s ease;
+}
+
+.book.closed .book-cover{transform:rotateY(0deg)}
+.book.open .book-cover{transform:rotateY(-165deg)}
+
+.book-pages{
+  position:absolute;
+  inset:0;
+  background:linear-gradient(135deg,#f5f0e6,#d7cdbc);
+  padding:50px;
+  transition:opacity .6s;
+}
+
+.book.closed .book-pages{
+  opacity:0;
+  pointer-events:none;
+}
+.book.open .book-pages{
+  opacity:1;
+}
+
+.note-text{
+  font-family:Georgia, serif;
+  font-size:18px;
+  line-height:2;
+  color:#2a2520;
+  white-space:pre-line;
+}
+
+/* ===== LAMP ===== */
+.lamp-bulb{
+  width:50px;
+  height:50px;
+  border-radius:50%;
+  background:#222;
+}
+.lamp-bulb.on{
+  background:#ffe680;
+  box-shadow:0 0 80px rgba(255,230,120,.9);
+}
+
+/* ================================================= */
+/* ================= MOBILE FIX =================== */
+/* ================================================= */
+@media (max-width: 768px){
+
+  body{
+    overflow:auto;
   }
 
-  .book {
-    width: 85vw;
-    height: auto;
-    max-height: 70vh;
+  .scene.active{
+    flex-direction:column;
+    gap:30px;
+    padding:20px 0;
   }
 
-  .book-pages,
-  .book-cover {
-    width: 100%;
-    height: 100%;
+  .book{
+    width:90vw;
+    height:auto;
   }
 
-  .note {
-    padding: 20px;
+  .book-pages{
+    padding:25px;
   }
 
-  .note-text {
-    font-size: 15px;
-    line-height: 1.8;
+  .note-text{
+    font-size:15px;
+    line-height:1.7;
   }
 
-  .lamp-container {
-    transform: scale(0.8);
-  }
-
-}
-
-body {
-    font-family: 'Courier New', monospace;
-    background: #000;
-    min-height: 100vh;
-    overflow: hidden;
-    position: relative;
-    image-rendering: pixelated;
-}
-
-/* --- GRAIN --- */
-body::before {
-    content: '';
-    position: fixed;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300"><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="1.9" numOctaves="5" /></filter><rect width="300" height="300" filter="url(%23noise)"/></svg>');
-    opacity: 0.25;
-    z-index: 9999;
-    pointer-events: none;
-    animation: grainMove 0.2s steps(4) infinite;
-}
-
-@keyframes grainMove {
-    0%, 100% { transform: translate(0, 0); }
-    25% { transform: translate(-2%, -1%); }
-    50% { transform: translate(1%, -2%); }
-    75% { transform: translate(-1%, 1%); }
-}
-
-/* --- VIGNETTE --- */
-body::after {
-    content: '';
-    position: fixed;
-    inset: 0;
-    box-shadow: inset 0 0 300px 120px rgba(0,0,0,0.95);
-    pointer-events: none;
-    z-index: 9998;
-}
-
-.container {
-    position: relative;
-    width: 100%;
-    height: 100vh;
-    background: radial-gradient(ellipse at 40% 50%, rgba(15,10,8,0.7), #000 60%);
-}
-
-/* --- BUTTON --- */
-.start-button {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    padding: 20px 45px;
-    font-size: 18px;
-    background: rgba(20, 15, 12, 0.9);
-    color: #9a9a9a;
-    border: 1px solid rgba(80, 70, 60, 0.6);
-    letter-spacing: 4px;
-    cursor: pointer;
-    z-index: 100;
-}
-
-/* --- SCENE --- */
-.scene {
-    display: none;
-    position: absolute;
-    inset: 0;
-    justify-content: center;
-    align-items: center;
-    gap: 100px;
-}
-.scene.active { display: flex; }
-
-/* --- BOOK --- */
-.book-container { perspective: 1200px; }
-
-.book {
-    position: relative;
-    width: 450px;
-    height: 550px;
-    transform-style: preserve-3d;
-}
-
-.book.closed .book-cover { transform: rotateY(0deg); }
-.book.open .book-cover { transform: rotateY(-165deg); }
-
-.book-cover {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, #231912, #140f0a);
-    transform-origin: left;
-    transition: transform 1.2s ease;
-}
-
-.book-pages {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, rgba(35,30,25,0.95), rgba(25,20,15,0.98));
-    padding: 60px 50px;
-    transition: opacity 0.6s;
-}
-
-/* ======= BUGFIX: NICHT OPTISCH, NUR STATE ======= */
-.book.closed .book-pages {
-    opacity: 0;
-    pointer-events: none;
-}
-.book.open .book-pages {
-    opacity: 1;
-    pointer-events: auto;
-}
-
-/* --- NOTE --- */
-.note {
-    background: radial-gradient(ellipse at 30% 30%, #f5f0e6, #d7cdbc);
-    padding: 35px 30px;
-}
-.note-text {
-    font-size: 18px;
-    line-height: 2.1;
-    color: #2a2520;
-    white-space: pre-line;
-    font-family: Georgia, serif;
-}
-
-/* --- LAMP --- */
-.lamp-bulb {
-    width: 45px;
-    height: 45px;
-    border-radius: 50%;
-}
-.lamp-bulb.off { background: #222; }
-.lamp-bulb.on {
-    background: radial-gradient(circle, #fffae6, #ffcc40);
-    box-shadow: 0 0 80px rgba(255,235,100,0.8);
 }
 </style>
 </head>
@@ -193,91 +173,78 @@ body::after {
 <body>
 
 <div class="container">
-    <button class="start-button" id="startBtn">Rätsel Starten</button>
+  <button id="startBtn">Rätsel starten</button>
 
-    <div class="scene" id="scene">
-        <div class="book-container">
-            <div class="book closed" id="book">
-                <div class="book-cover"></div>
-                <div class="book-pages">
-                    <div class="note">
-                        <div class="note-text">
+  <div class="scene" id="scene">
+    <div class="book-container">
+      <div class="book closed" id="book">
+        <div class="book-cover"></div>
+        <div class="book-pages">
+          <div class="note-text">
 Dort, wo Bücher keinen Besitzer haben.
-Wo man nimmt, und auch gibt.
-Mann kann 24/7 rein.
+Wo man nimmt, um zu geben.
+Vierundzwanzig Stunden.
 Ein Quadratmeter.
 
 Du brauchst einen Namen.
 
-Das verdammte Licht...
+Das verdammte Licht…
 es spinnt wieder.
-                        </div>
-                    </div>
-                </div>
-            </div>
+          </div>
         </div>
-
-        <div class="lamp-bulb off" id="bulb"></div>
+      </div>
     </div>
+
+    <div class="lamp-bulb" id="bulb"></div>
+  </div>
 </div>
 
 <script>
-/* ================== DEIN ORIGINAL JS + BUGFIX ================== */
+let finished=false;
 
-let finished = false;
-
-const morseCode = {
-    N: '-.', E: '.', I: '..', L: '.-..',
-    A: '.-', B: '-...', U: '..-', T: '-'
+const morse={
+  N:'-.',E:'.',I:'..',L:'.-..',
+  A:'.-',B:'-...',U:'..-',T:'-'
 };
 
-const message = "NEIL LABUTE";
+const message="NEIL LABUTE";
 
-function wait(ms) {
-    return new Promise(r => setTimeout(r, ms));
-}
+function wait(ms){return new Promise(r=>setTimeout(r,ms));}
 
-async function playMorse() {
-    const bulb = document.getElementById('bulb');
-
-    for (const c of message) {
-        if (c === ' ') { await wait(1400); continue; }
-        for (const s of morseCode[c]) {
-            bulb.classList.replace('off', 'on');
-            await wait(s === '.' ? 200 : 600);
-            bulb.classList.replace('on', 'off');
-            await wait(200);
-        }
-        await wait(600);
+async function playMorse(){
+  const bulb=document.getElementById('bulb');
+  for(const c of message){
+    if(c===' '){await wait(1400);continue;}
+    for(const s of morse[c]){
+      bulb.classList.add('on');
+      await wait(s==='.'?200:600);
+      bulb.classList.remove('on');
+      await wait(200);
     }
+    await wait(600);
+  }
 }
 
-document.getElementById('startBtn').addEventListener('click', async function () {
-    if (finished) return;
+document.getElementById('startBtn').onclick=async function(){
+  if(finished)return;
 
-    this.style.display = 'none';
+  this.style.display='none';
+  const scene=document.getElementById('scene');
+  const book=document.getElementById('book');
 
-    const scene = document.getElementById('scene');
-    const book  = document.getElementById('book');
+  scene.classList.add('active');
 
-    scene.classList.add('active');
+  setTimeout(()=>book.classList.replace('closed','open'),600);
 
-    setTimeout(() => {
-        book.classList.remove('closed');
-        book.classList.add('open');
-    }, 600);
+  await wait(2000);
+  await playMorse();
 
-    await wait(2000);
-    await playMorse();
-
-    setTimeout(() => {
-        finished = true;
-        book.classList.remove('open');
-        book.classList.add('closed');
-    }, 800);
-});
+  setTimeout(()=>{
+    finished=true;
+    book.classList.replace('open','closed');
+  },800);
+};
 </script>
 
 </body>
 </html>
-
