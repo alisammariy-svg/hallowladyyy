@@ -13,6 +13,41 @@
     box-sizing: border-box;
     cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"><circle cx="8" cy="8" r="6" fill="rgba(255,255,255,0.3)" stroke="white" stroke-width="1"/></svg>'), auto;
 }
+/* ===== MOBILE FIX ===== */
+@media (max-width: 768px) {
+
+  .scene.active {
+    flex-direction: column;
+    gap: 40px;
+    padding: 20px;
+  }
+
+  .book {
+    width: 85vw;
+    height: auto;
+    max-height: 70vh;
+  }
+
+  .book-pages,
+  .book-cover {
+    width: 100%;
+    height: 100%;
+  }
+
+  .note {
+    padding: 20px;
+  }
+
+  .note-text {
+    font-size: 15px;
+    line-height: 1.8;
+  }
+
+  .lamp-container {
+    transform: scale(0.8);
+  }
+
+}
 
 body {
     font-family: 'Courier New', monospace;
@@ -245,3 +280,4 @@ document.getElementById('startBtn').addEventListener('click', async function () 
 
 </body>
 </html>
+
