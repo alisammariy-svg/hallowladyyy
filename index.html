@@ -15,7 +15,7 @@ body{
   overflow-y:auto;
 }
 
-/* Grain */
+/* ===== GRAIN ===== */
 body::before{
   content:'';
   position:fixed;
@@ -32,7 +32,7 @@ body::before{
   75%{transform:translate(-1%,1%)}
 }
 
-/* Vignette */
+/* ===== VIGNETTE ===== */
 body::after{
   content:'';
   position:fixed;
@@ -41,19 +41,19 @@ body::after{
   pointer-events:none;
 }
 
+/* ===== LAYOUT ===== */
 .container{
-  min-height:120vh; /* erlaubt Scroll */
+  min-height:100vh;
   display:flex;
   flex-direction:column;
-  justify-content:center;
   align-items:center;
-  gap:40px;
-  padding:40px 0;
+  padding:40px 20px 80px;
+  gap:30px;
 }
 
-/* Buttons */
+/* ===== BUTTONS ===== */
 button{
-  padding:18px 40px;
+  padding:16px 36px;
   background:#140f0c;
   color:#9a9a9a;
   border:1px solid #555;
@@ -66,22 +66,23 @@ button{
   display:none;
 }
 
-/* Scene */
+/* ===== SCENE ===== */
 .scene{
-  display:none;
   width:100%;
+  max-width:1200px;
+  display:none;
   justify-content:center;
-  align-items:center;
+  align-items:flex-start;
   gap:80px;
 }
 .scene.active{display:flex}
 
-/* Book */
+/* ===== BOOK ===== */
 .book-container{perspective:1200px}
 
 .book{
-  width:450px;
-  height:550px;
+  width:420px;
+  height:520px;
   position:relative;
   transform-style:preserve-3d;
 }
@@ -116,30 +117,44 @@ button{
   white-space:pre-line;
 }
 
-/* Lamp */
+/* ===== LAMP ===== */
 .lamp-bulb{
   width:50px;
   height:50px;
   border-radius:50%;
   background:#222;
+  margin-top:40px;
 }
 .lamp-bulb.on{
   background:#ffe680;
   box-shadow:0 0 80px rgba(255,230,120,.9);
 }
 
-/* Mobile */
+/* ===== MOBILE FIX ===== */
 @media(max-width:768px){
+
   .scene.active{
     flex-direction:column;
-    gap:30px;
+    align-items:center;
+    gap:40px;
   }
+
   .book{
     width:90vw;
     height:auto;
   }
+
+  .book-pages{
+    padding:24px;
+  }
+
   .note-text{
     font-size:15px;
+    line-height:1.7;
+  }
+
+  .lamp-bulb{
+    margin-top:0;
   }
 }
 </style>
@@ -148,10 +163,12 @@ button{
 <body>
 
 <div class="container">
+
   <button id="startBtn">Rätsel starten</button>
   <button id="restartBtn">Rätsel erneut öffnen</button>
 
   <div class="scene" id="scene">
+
     <div class="book-container">
       <div class="book closed" id="book">
         <div class="book-cover"></div>
@@ -172,6 +189,7 @@ es spinnt wieder.
     </div>
 
     <div class="lamp-bulb" id="bulb"></div>
+
   </div>
 </div>
 
@@ -217,7 +235,7 @@ async function startRiddle(){
   book.classList.replace('open','closed');
   finished=true;
 
-  document.getElementById('restartBtn').style.display='block';
+  document.getElementById('restartBtn').style.display='inline-block';
 }
 
 document.getElementById('startBtn').onclick=function(){
