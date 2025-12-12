@@ -11,28 +11,20 @@
 body{
   font-family:'Courier New', monospace;
   background:#000;
-  min-height:100vh;
-  overflow-y:auto;
+  color:#ccc;
 }
 
-/* ===== GRAIN ===== */
+/* Grain */
 body::before{
   content:'';
   position:fixed;
   inset:-50%;
-  background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="1.9" numOctaves="5"/></filter><rect width="300" height="300" filter="url(%23n)"/></svg>');
+  background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="1.8" numOctaves="5"/></filter><rect width="300" height="300" filter="url(%23n)"/></svg>');
   opacity:.25;
   pointer-events:none;
-  animation:grain .2s steps(4) infinite;
-}
-@keyframes grain{
-  0%{transform:translate(0,0)}
-  25%{transform:translate(-2%,-1%)}
-  50%{transform:translate(1%,-2%)}
-  75%{transform:translate(-1%,1%)}
 }
 
-/* ===== VIGNETTE ===== */
+/* Vignette */
 body::after{
   content:'';
   position:fixed;
@@ -41,14 +33,15 @@ body::after{
   pointer-events:none;
 }
 
-/* ===== LAYOUT ===== */
-.container{
-  min-height:100vh;
+/* ===== PAGE STRUCTURE ===== */
+.page{
+  max-width:1100px;
+  margin:0 auto;
+  padding:40px 20px 120px;
   display:flex;
   flex-direction:column;
   align-items:center;
-  padding:40px 20px 80px;
-  gap:30px;
+  gap:40px;
 }
 
 /* ===== BUTTONS ===== */
@@ -62,27 +55,27 @@ button{
   cursor:pointer;
 }
 
-#restartBtn{
-  display:none;
-}
+#restartBtn{display:none}
 
 /* ===== SCENE ===== */
 .scene{
   width:100%;
-  max-width:1200px;
   display:none;
+  gap:60px;
+}
+.scene.active{
+  display:flex;
   justify-content:center;
   align-items:flex-start;
-  gap:80px;
 }
-.scene.active{display:flex}
 
 /* ===== BOOK ===== */
 .book-container{perspective:1200px}
 
 .book{
   width:420px;
-  height:520px;
+  max-width:90vw;
+  aspect-ratio: 4 / 5;
   position:relative;
   transform-style:preserve-3d;
 }
@@ -102,7 +95,7 @@ button{
   position:absolute;
   inset:0;
   background:linear-gradient(135deg,#f5f0e6,#d7cdbc);
-  padding:40px;
+  padding:32px;
   transition:opacity .6s;
 }
 
@@ -111,50 +104,37 @@ button{
 
 .note-text{
   font-family:Georgia, serif;
-  font-size:17px;
-  line-height:1.9;
+  font-size:16px;
+  line-height:1.8;
   color:#2a2520;
   white-space:pre-line;
 }
 
 /* ===== LAMP ===== */
+.lamp{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin-top:20px;
+}
+
 .lamp-bulb{
   width:50px;
   height:50px;
   border-radius:50%;
   background:#222;
-  margin-top:40px;
 }
 .lamp-bulb.on{
   background:#ffe680;
   box-shadow:0 0 80px rgba(255,230,120,.9);
 }
 
-/* ===== MOBILE FIX ===== */
+/* ===== MOBILE ===== */
 @media(max-width:768px){
-
   .scene.active{
     flex-direction:column;
     align-items:center;
     gap:40px;
-  }
-
-  .book{
-    width:90vw;
-    height:auto;
-  }
-
-  .book-pages{
-    padding:24px;
-  }
-
-  .note-text{
-    font-size:15px;
-    line-height:1.7;
-  }
-
-  .lamp-bulb{
-    margin-top:0;
   }
 }
 </style>
@@ -162,7 +142,7 @@ button{
 
 <body>
 
-<div class="container">
+<div class="page">
 
   <button id="startBtn">Rätsel starten</button>
   <button id="restartBtn">Rätsel erneut öffnen</button>
@@ -188,14 +168,15 @@ es spinnt wieder.
       </div>
     </div>
 
-    <div class="lamp-bulb" id="bulb"></div>
+    <div class="lamp">
+      <div class="lamp-bulb" id="bulb"></div>
+    </div>
 
   </div>
+
 </div>
 
 <script>
-let finished=false;
-
 const morse={
   N:'-.',E:'.',I:'..',L:'.-..',
   A:'.-',B:'-...',U:'..-',T:'-'
@@ -219,7 +200,6 @@ async function playMorse(){
 }
 
 async function startRiddle(){
-  finished=false;
   document.getElementById('restartBtn').style.display='none';
 
   const scene=document.getElementById('scene');
@@ -233,7 +213,6 @@ async function startRiddle(){
 
   await wait(800);
   book.classList.replace('open','closed');
-  finished=true;
 
   document.getElementById('restartBtn').style.display='inline-block';
 }
